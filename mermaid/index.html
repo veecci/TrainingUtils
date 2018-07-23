@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- author: vici -->
+
+<html>
+	<script src="mermaid/mermaid.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/mermaid.css">
+	<!--<script>mermaid.initialize({startOnLoad:true});</script>-->
+	<head>
+		<title>mermaid</title>
+		<style type="text/css">
+			body {font-family: Arial, Verdana, sans-serif;}
+			h1:first-letter {color: #6998c9;}
+		</style>
+	</head>
+	<body>
+		<h1>mermaid</h1>
+		<form>
+			<p> Input your graph </p>
+			<textarea name="input" id="inputId" cols="27" rows="10"></textarea>
+			<br />
+			<input type="checkbox" id="directedId">directed
+			<input type="checkbox" id="weightedId">weighted<br> 
+			<button type="button" onClick="genGraph()">Draw</button>
+
+		</form>
+		<br/>
+		<div id="graph" class="mermaid"></div>
+	</body>
+
+	<script>
+
+	function convert(text) {
+		var numbers = [];
+		text.replace(/(\d[\d]*)/g, function(x) { 
+			var n = Number(x); 
+			if (x == n) { 
+				numbers.push(x); 
+			}  
+		});
+		var arrow = document.getElementById('directedId').checked == true ? '>' : '-';
+		var weighted = document.getElementById('weightedId').checked;
+
+		var ret = "graph LR;";
+		var n = numbers[0], m = numbers[1];
+		if (weighted != true) {
+			for (var i = 0; i < m; ++i) {
+				var x = numbers[i * 2 + 2], y = numbers[i * 2 + 3];
+				ret += x + "((" + x + ")) --" + arrow + y + "((" + y + "));";
+			}
+		} else {
+			for (var i = 0; i < m; ++i) {
+				var x = numbers[i * 3 + 2], y = numbers[i * 3 + 3], z = numbers[i * 3 + 4];
+				ret += x + "((" + x + ")) --" + z + "--" + arrow + y + "((" + y + "));";
+			}
+		}
+		return ret;
+	}
+
+	function genGraph() {
+		var mermaidholder = document.getElementById('graph');
+		while (mermaidholder.firstChild) {
+		    mermaidholder.removeChild(mermaidholder.firstChild);
+		}
+		var mermaidnode = document.createElement('div');
+		mermaidnode.className = 'mermaid';
+		mermaidnode.innerHTML = convert( document.getElementById('inputId').value );
+		mermaidholder.appendChild(mermaidnode);
+		mermaid.init(undefined, mermaidnode);
+	}
+
+	</script>
+
+</html>
