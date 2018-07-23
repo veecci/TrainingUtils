@@ -1,26 +1,22 @@
 import Tkinter
 import ttk
 import requests
+import webbrowser
 
 users = [
          'vici',
          'noxe'
-]
+         ]
 
 rk_colors = ['blue', 'purple', 'orange', 'red']
 rk_thresholds = [1900, 2100, 2400, 3000]
 
-win = Tkinter.Tk()
-tree = ttk.Treeview(win)
-columns = ("name", "rating", "maxRating")
-tree["height"] = 20
-tree["columns"] = columns
-tree.column("name", width = 100)
-tree.column("rating", width = 100)
-tree.column("maxRating", width = 100)
 
-for idx in range(len(users)):
-    tree.insert("", idx, text = str(idx + 1) ,values=(users[idx], "", ""))
+def OnDoubleClick(event):
+    item = tree.selection()[0]
+    idx = int(tree.item(item, "text")) - 1
+    url = "http://codeforces.com/profile/" + users[idx]
+    webbrowser.open_new(url)
 
 def treeview_sort_column(tv, col, reverse):
     l = [(tv.set(k, col), k) for k in tv.get_children('')]
@@ -56,6 +52,19 @@ for idx in range(len(users)):
 
     for color in rk_colors:
         tree.tag_configure(color, foreground=color)
+
+win = Tkinter.Tk()
+tree = ttk.Treeview(win)
+columns = ("name", "rating", "maxRating")
+tree["height"] = 20
+tree["columns"] = columns
+tree.column("name", width = 100)
+tree.column("rating", width = 100)
+tree.column("maxRating", width = 100)
+tree.bind("<Double-1>", OnDoubleClick)
+
+for idx in range(len(users)):
+    tree.insert("", idx, text = str(idx + 1) ,values=(users[idx], "", ""))
 
 for col in columns:
     tree.heading(col, text=col, command=lambda _col=col: treeview_sort_column(tree, _col, True))
