@@ -5,7 +5,10 @@ import requests
 users = [
          'vici',
          'noxe'
-         ]
+]
+
+rk_colors = ['blue', 'purple', 'orange', 'red']
+rk_thresholds = [1900, 2100, 2400, 3000]
 
 win = Tkinter.Tk()
 tree = ttk.Treeview(win)
@@ -30,6 +33,12 @@ def treeview_sort_column(tv, col, reverse):
     # reverse sort next time
     tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))
 
+def rankCol(rating):
+    for idx in range(len(rk_colors)):
+        if rating < rk_thresholds[idx]:
+            return rk_colors[idx]
+    return 'black'
+
 def update():
     children = tree.get_children()
     str = ''
@@ -43,7 +52,10 @@ re = requests.get('http://codeforces.com/api/user.info?handles=' + str)
 for idx in range(len(users)):
     rating = re.json()['result'][idx]['rating']
     maxRating = re.json()['result'][idx]['maxRating']
-    tree.item(children[idx], values = (users[idx], rating, maxRating))
+    tree.item(children[idx], values = (users[idx], rating, maxRating), tags = (rankCol(rating)))
+
+    for color in rk_colors:
+        tree.tag_configure(color, foreground=color)
 
 for col in columns:
     tree.heading(col, text=col, command=lambda _col=col: treeview_sort_column(tree, _col, True))
