@@ -44,11 +44,11 @@ def update():
         else:
             str += ';' + users[idx]
 
-re = requests.get('http://codeforces.com/api/user.info?handles=' + str)
-for idx in range(len(users)):
-    rating = re.json()['result'][idx]['rating']
-    maxRating = re.json()['result'][idx]['maxRating']
-    tree.item(children[idx], values = (users[idx], rating, maxRating), tags = (rankCol(rating)))
+    re = requests.get('http://codeforces.com/api/user.info?handles=' + str)
+    for idx in range(len(users)):
+        rating = re.json()['result'][idx]['rating']
+        maxRating = re.json()['result'][idx]['maxRating']
+        tree.item(children[idx], values = (users[idx], rating, maxRating), tags = (rankCol(rating)))
 
     for color in rk_colors:
         tree.tag_configure(color, foreground=color)
@@ -72,4 +72,6 @@ for col in columns:
 btn_upd = ttk.Button(win, text = "update", command = update)
 tree.pack()
 btn_upd.pack()
+update()
+
 win.mainloop()
